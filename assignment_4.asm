@@ -178,3 +178,7 @@ ret
 ; nasm -f elf64  Assignment_4.asm
 ; ld -o Assignment_4 Assignment_4.o
 ; ./Assignment_4
+; example input - 
+; +
+; 0000000000000002
+; 0000000000000003
