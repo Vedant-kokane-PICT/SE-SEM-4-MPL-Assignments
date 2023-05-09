@@ -141,6 +141,6 @@ skip2:	add dl,30h
         read_write 1,1,answer,16       
 ret
 	
-; nasm -f elf64  Assignment_5.asm
-; ld -o Assignment_5 Assignment_5.o
-; ./Assignment_5
+; nasm -f elf64  assignment_6.asm
+; ld -o assignment_6 Assignment_6.o
+; ./assignment_6
