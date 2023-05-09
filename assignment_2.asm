@@ -62,3 +62,6 @@ skip:
 ; nasm -f elf64  assignment_2.asm --> used for compiling
 ; ld -o assignment_2 assignment_2.o
 ; ./assignment_2
+; example input -- vedant 
+; output is 6
+; give 1 space after input
