@@ -92,9 +92,9 @@ hex_to_ascii:
         jnz letter2
 ret
 	
-; nasm -f elf64  Assignment_1.asm
-; ld -o Assignment_1 Assignment_1.o
-; ./Assignment_1
+; nasm -f elf64  assignment_1.asm
+; ld -o assignment_1 assignment_1.o
+; ./assignment_1
 
 ; example  input -  
 ; 5555555555555555
