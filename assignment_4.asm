@@ -175,9 +175,9 @@ hex_to_ascii:
 		read_write 1,1,mspace,1
 ret
 	
-; nasm -f elf64  Assignment_4.asm
-; ld -o Assignment_4 Assignment_4.o
-; ./Assignment_4
+; nasm -f elf64  assignment_4.asm
+; ld -o assignment_4 assignment_4.o
+; ./assignment_4
 ; example input - 
 ; +
 ; 0000000000000002
