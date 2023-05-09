@@ -78,6 +78,6 @@ disp:
 		jnz loop
 	ret
 	
-; nasm -f elf64  Assignment_5.asm
-; ld -o Assignment_5 Assignment_5.o
-; ./Assignment_5
+; nasm -f elf64  assignment_5.asm
+; ld -o assignment_5 assignment_5.o
+; ./assignment_5
