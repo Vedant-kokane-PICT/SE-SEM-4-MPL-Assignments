@@ -9,21 +9,20 @@
 %endmacro
 
 section .data
-        menu db 10d,13d,"-------------------------------"
-             db 10d,"1. Hex to BCD"
-             db 10d,"2. BCD to Hex"
+        menu db 10d,13d,"--------------------"
+             db 10d,"1. HEX to BCD"
+             db 10d,"2. BCD to HEX"
              db 10d,"3. Exit"
-             db 10d,13d,"-------------------------------"
              db 10d,"Enter your choice: "
         menulen equ $-menu
-        m1 db 10d,13d,"Enter Hex Number: "
+        m1 db 10d,13d,"Enter HEX Number: "
         l1 equ $-m1
         m2 db 10d,13d,"Enter BCD Number: "
         l2 equ $-m2
         
         m3 db 10d,13d,"Equivalent BCD Number: "
         l3 equ $-m3
-        m4 db 10d,13d,"Equivalent Hex Number: "
+        m4 db 10d,13d,"Equivalent HEX Number: "
         l4 equ $-m4
         
 section .bss
@@ -45,8 +44,7 @@ _start:
         je hex2bcd
         cmp byte[choice],'2'
         je bcd2hex
-        
-; for hexadecimal to bcd   
+            
 hex2bcd:
         read_write 1,1,m1,l1
         read_write 0,0,num,17
@@ -68,7 +66,7 @@ loop3:
         read_write 1,1,num,16          
 jmp _start
 
-;for bcd to hexadecimal
+
 bcd2hex:        
         read_write 1,1,m2,l2
         read_write 0,0,num,17  
@@ -100,7 +98,9 @@ exit:
         mov rdx,0
         syscall
         
+        
 
+	
 asciihextohex:
 	mov rsi,num
 	mov rcx,16
@@ -140,7 +140,14 @@ skip2:	add dl,30h
         jnz loop2
         read_write 1,1,answer,16       
 ret
-	
+
+
 ; nasm -f elf64  assignment_6.asm
 ; ld -o assignment_6 Assignment_6.o
 ; ./assignment_6
+
+; example input: 
+; 1
+; 000000000000FFFF
+; output - 0000000000065535
+; and vice versa
