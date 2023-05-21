@@ -126,5 +126,5 @@ ret
 
 
 ; nasm -f elf64  assignment_8.asm
-; ld -o assignment_8 Assignment_8.o
+; ld -o assignment_8 assignment_8.o
 ; ./assignment_8
