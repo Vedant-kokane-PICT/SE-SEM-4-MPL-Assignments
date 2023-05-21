@@ -143,7 +143,7 @@ ret
 
 
 ; nasm -f elf64  assignment_6.asm
-; ld -o assignment_6 Assignment_6.o
+; ld -o assignment_6 assignment_6.o
 ; ./assignment_6
 
 ; example input: 
