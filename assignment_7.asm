@@ -136,7 +136,7 @@ skip1:
 	ret
 
 ; nasm -f elf64  assignment_7.asm
-; ld -o assignment_7 Assignment_7.o
+; ld -o assignment_7 assignment_7.o
 ; ./assignment_7
 
 ; Protected Mode
