@@ -1,145 +1,163 @@
 ; 21415 - Vedant Kokane , Batch - E4
 
-%macro read_write 4
-        mov rax,%1
-        mov rdi,%2
-        mov rsi,%3
-        mov rdx,%4
-        syscall
-%endmacro
-
 section .data
-        menu db 10d,13d,"--------------------"
-             db 10d,"1. HEX to BCD"
-             db 10d,"2. BCD to HEX"
-             db 10d,"3. Exit"
-             db 10d,"Enter your choice: "
-        menulen equ $-menu
-        m1 db 10d,13d,"Enter HEX Number: "
-        l1 equ $-m1
-        m2 db 10d,13d,"Enter BCD Number: "
-        l2 equ $-m2
-        
-        m3 db 10d,13d,"Equivalent BCD Number: "
-        l3 equ $-m3
-        m4 db 10d,13d,"Equivalent HEX Number: "
-        l4 equ $-m4
-        
+    menumsg db 10,10,'---------------------------------------'
+        db 10,'1: HEX to BCD'
+        db 10,'2: BCD to HEX'
+        db 10,'3: Exit'
+        db 10,'---------------------------------------'
+        db 10,10,'Enter Choice::'
+    menumsg_len equ $-menumsg
+  
+
+    hexinmsg db 10,10,'Enter 4 digit hex number::'
+    hexinmsg_len equ $-hexinmsg
+
+    bcdopmsg db 10,10,'BCD :'
+    bcdopmsg_len equ $-bcdopmsg
+
+    bcdinmsg db 10,10,'Enter 5 digit BCD number::'
+    bcdinmsg_len equ $-bcdinmsg
+
+    hexopmsg db 10,10,'Hex :'
+    hexopmsg_len equ $-hexopmsg
+
+
+
 section .bss
-        choice resb 1
-        num resb 16
-        answer resb 16
-        factor resb 16
-        
-section .code
-        global _start
+
+    numascii resb 06  
+    outputbuff resb 02
+    dispbuff resb 08
+
+    %macro display 2
+       mov rax,01
+       mov rdi,01
+       mov rsi,%1
+       mov rdx,%2
+       syscall
+    %endmacro
+
+       %macro accept 2
+      mov rax,0
+      mov rdi,0
+      mov rsi,%1
+      mov rdx,%2
+      syscall
+       %endmacro
+
+section .text
+
+    global _start
 _start:
-        
-        read_write 1,1,menu,menulen
-        read_write 0,0,choice,2
-        
-        cmp byte[choice],'3'
-        jae exit
-        cmp byte[choice],'1'
-        je hex2bcd
-        cmp byte[choice],'2'
-        je bcd2hex
-            
-hex2bcd:
-        read_write 1,1,m1,l1
-        read_write 0,0,num,17
-        call asciihextohex
-        
-        mov rax,rbx
-	mov rbx,10
-	mov rdi,num+15
-loop3:
-	mov rdx,0
-	div rbx
-	add dl,30h
-	mov [rdi],dl
-	dec rdi
-	cmp rax,0
-	jne loop3
-	             
-        read_write 1,1,m3,l3
-        read_write 1,1,num,16          
-jmp _start
+
+menu:    display menumsg,menumsg_len
+    accept numascii,2
+
+    cmp byte [numascii],'1'
+    je hex2bcd_proc
 
 
-bcd2hex:        
-        read_write 1,1,m2,l2
-        read_write 0,0,num,17  
+
+    cmp byte [numascii],'2'
+    je bcd2hex_proc
+  
+
+    cmp byte [numascii],'3'
+    je exit
+    jmp _start
+
+exit:
+    mov rax,60
+    mov rbx,0
+    syscall
+
+hex2bcd_proc:
+    display hexinmsg,hexinmsg_len
+    accept numascii,5
+    call packnum
+    mov ax,bx  
+    mov rcx,0
+    mov bx,10        
+h2bup1:    mov dx,0
+    div bx
+    push rdx
+    inc rcx
+    cmp ax,0
+    jne h2bup1
+    mov rdi,outputbuff
+
+h2bup2:    pop rdx
+    add dl,30h
+    mov [rdi],dl
+    inc rdi
+    loop h2bup2
+  
+    display bcdopmsg,bcdopmsg_len
+    display outputbuff,5
+    jmp menu
+
+bcd2hex_proc:
+    display bcdinmsg,bcdinmsg_len
+    accept numascii,6
+
+    display hexopmsg,hexopmsg_len
+
+    mov rsi,numascii
+    mov rcx,05
+    mov rax,0
+    mov ebx,0ah
+
+b2hup1:    mov rdx,0
+    mul ebx
+    mov dl,[rsi]
+    sub dl,30h
+    add rax,rdx
+    inc rsi
+    loop b2hup1
+    mov ebx,eax
+    call disp32_num
+    jmp menu
+
+packnum:
+    mov bx,0
+    mov ecx,04
+    mov esi,numascii
+up1:
+    rol bx,04
+    mov al,[esi]
+    cmp al,39h
+    jbe skip1
+    sub al,07h
+skip1:    sub al,30h
+    add bl,al
+    inc esi
+    loop up1
+    ret
+
+
+disp32_num:
+    mov rdi,dispbuff    
+    mov rcx,08      
+
+dispup1:
+    rol ebx,4      
+    mov dl,bl       
+    and dl,0fh       
+    add dl,30h    
+    cmp dl,39h       
+    jbe dispskip1       
+    add dl,07h        
+
+dispskip1:
+    mov [rdi],dl        
+    inc rdi            
+    loop dispup1        
                 
-        mov rcx,16
-	mov rsi,num+15
-	mov rbx,0
-	mov qword[factor],1
-	
-loop4:
-	mov rax,0	
-	mov al,[rsi]
-        sub al,30h
-	mul qword[factor]
-	add rbx,rax
-	mov rax,10
-	mul qword[factor]
-	mov qword[factor],rax
-	dec rsi
-	loop loop4
 
-	read_write 1,1,m4,l4
-	mov rax,rbx
-	call display            
-jmp _start     
-   
-exit:   
-        mov rax,60
-        mov rdx,0
-        syscall
-        
-        
-
-	
-asciihextohex:
-	mov rsi,num
-	mov rcx,16
-	mov rbx,0
-	mov rax,0
-		
-loop1:	rol rbx,04
-	mov al,[rsi]
-	cmp al,39h
-	jbe skip1
-	sub al,07h
-skip1:	sub al,30h
-	
-	add rbx,rax
-	
-	inc rsi
-	dec rcx
-	jnz loop1	
-ret	
-
-display:
-        mov rsi,answer+15
-        mov rcx,16
-
-loop2:	mov rdx,0
-        mov rbx,16
-        div rbx
-        cmp dl,09h
-        jbe skip2
-        
-        add dl,07h
-skip2:	add dl,30h
-        mov [rsi],dl
-        
-        dec rsi
-        dec rcx
-        jnz loop2
-        read_write 1,1,answer,16       
-ret
+    display dispbuff+3,5   
+  
+    ret
 
 
 ; nasm -f elf64  assignment_6.asm
